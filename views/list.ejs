@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>Project Management</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+  <div class="box" id="heading">
+    <h1> <%=kindOfDay %></h1>
+  </div>
+  <form class="" action="/delete/<%=masterListName%>" method="post">
+    <div class="box">
+      <% toDoList.forEach(function(items){%>
+      <div class="item">
+        <input type="checkbox" name="deleteItems" value="<%=items._id%>" onclick="this.form.submit();">
+        <p><%= items.name%></p>
+        <!-- <a href="/<%=items.name%>"> -->
+      </div>
+      <% }); %>
+  </form>
+  <form class="item" action="/save/<%=masterListName%>" method="post">
+    <input type="text" name="newItem" value="" placeholder="Enter new Item" autocomplete="off" required>
+    <button type="submit" name="submit">+</button>
+    <!-- <button type="submit" name="delete">-</button> -->
+  </form>
+  </div>
+</body>
+
+</html>

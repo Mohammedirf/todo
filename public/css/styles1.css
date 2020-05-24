@@ -1,0 +1,39 @@
+html body {
+  /* //min-height: 1000px; */
+  font-family: 'Montserrat';
+}
+
+#pricing{
+  padding: 5% 10%;
+}
+
+.fas,.far{
+color: #163f3e;
+}
+
+.navbar-brand{
+  font-family: 'Ubuntu';
+  letter-spacing: 5px;
+  font-size: 5rem;
+}
+
+.newProject{
+  margin-top: 10px;
+}
+
+.form-group{
+  width: 100%;
+}
+
+.jumbotron{
+  background-color: teal;
+  color: #FFF;
+}
+
+h5{
+  color: teal
+}
+
+.card-header.collapsed {
+    background:teal;
+}

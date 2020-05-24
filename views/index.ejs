@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<%- include('partials/header.ejs'); -%>
+  <body>
+    <div class="wrapper fadeInDown">
+      <div id="formContent">
+        <!-- Tabs Titles -->
+
+        <!-- Icon -->
+        <div class="fadeIn first">
+          <h2>ULU</h2>
+        </div>
+
+        <!-- Login Form -->
+        <form method="post" action="/general">
+          <input type="text" id="login" class="fadeIn second" name="login" placeholder="Your Amazing Name">
+          <input type="text" id="password" class="fadeIn third" name="login" placeholder="Shhhh!!!">
+          <input type="submit" class="fadeIn fourth" value="Let me in">
+        </form>
+
+        <!-- Remind Passowrd -->
+        <div id="formFooter">
+          <a class="underlineHover" href="#">Oops !! I forgot my "Shhh"</a>
+        </div>
+
+      </div>
+    </div>
+  </body>
+</html>
