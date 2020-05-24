@@ -285,7 +285,7 @@ function saveTask(taskName, projectName) {
 }
 
 // Starting the server
-app.listen(3000, function() {
+app.listen(process.env.PORT || 3000, function() {
   var sToday = new Date();
   const sOptions = {
     weekday: 'long',
