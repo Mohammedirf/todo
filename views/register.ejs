@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<%- include('partials/header.ejs'); -%>
+  <body>
+    <div class="wrapper fadeInDown">
+      <div id="formContent">
+        <!-- Tabs Titles -->
+
+        <!-- Icon -->
+        <div class="fadeIn first">
+          <h2>ULU</h2>
+        </div>
+
+        <!-- Login Form -->
+        <form method="post" action="/register">
+          <input type="text" id="name" class="fadeIn second" name="name" placeholder="Your Amazing Name" required>
+          <input type="email" id="login" class="fadeIn third" name="username" placeholder="Your Amazing Email" required>
+          <input type="password" id="password" class="fadeIn fourth" name="password" placeholder="Shhhh!!!" required>
+          <input type="submit" class="fadeIn fifth" value="Register">
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

@@ -14,7 +14,11 @@ color: #163f3e;
 .navbar-brand{
   font-family: 'Ubuntu';
   letter-spacing: 5px;
-  font-size: 5rem;
+  font-size: 2rem;
+}
+
+.navbar{
+  background-color: teal;
 }
 
 .newProject{

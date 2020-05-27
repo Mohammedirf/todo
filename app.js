@@ -1,9 +1,13 @@
 //jshint esversion:6
 
+require('dotenv').config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mongoose = require("mongoose");
+const session = require("express-session");
+const passport = require("passport");
+const passportLocalMongoose = require("passport-local-mongoose");
 
 const app = express();
 
@@ -13,6 +17,15 @@ app.use(bodyParser.urlencoded({
 app.use(express.static("public"));
 
 app.set('view-engine', 'ejs');
+
+app.use(session({
+  secret: process.env.DB_SECRET,
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 mongoose.connect("mongodb+srv://admin-irfi:Test123@cluster0-ejtso.mongodb.net/ProjectDB", {
   useNewUrlParser: true,
@@ -37,28 +50,35 @@ const taskSchema = new mongoose.Schema({
 
 const projectSchema = new mongoose.Schema({
   name: String,
+  userId: String,
   tasks: [taskSchema]
 });
 
-// defining the models
+const userSchema = new mongoose.Schema({
+  name: String,
+  username: String,
+  password: String
+});
+
+const userDetailSchema = new mongoose.Schema({
+  name:String,
+  userId: String
+});
+
+userSchema.plugin(passportLocalMongoose);
+
+// defining the models - User
+const User = mongoose.model("User", userSchema);
+
+passport.use(User.createStrategy());
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+// defining the models - Task and Project
 const Task = mongoose.model("Task", taskSchema);
 const Project = mongoose.model("Project", projectSchema);
-
-//Creating Seed data
-const tsk1 = new Task({
-  name: "Sample Task 1",
-  completed: false
-});
-const tsk2 = new Task({
-  name: "Sample Task 2",
-  completed: false
-});
-const tsk3 = new Task({
-  name: "Sample Task 3",
-  completed: false
-});
-
-var seedTasks = [tsk1, tsk2, tsk3];
+const UserDetail = mongoose.model("UserDetail", userDetailSchema);
 
 // Inserting Dummy records if databse is empty
 function insertSeedData() {
@@ -74,30 +94,132 @@ function insertSeedData() {
 
 
 // Sending initial response to user
-app.get("/", function(req, res) {
-  Project.find({},function(err,projectList){
+// app.get("/", function(req, res) {
+//   Project.find({},function(err,projectList){
+//     if(!err){
+//       //console.log(projectList);
+//       res.render("projects.ejs",{projects:projectList});
+//     }
+//   });
+// });
+
+//Sending the initial login page
+app.get("/", (req, res) => {
+  //console.log(req.user);
+  res.render("login.ejs");
+});
+
+app.post('/login',
+  passport.authenticate('local', {
+    successRedirect: "/home",
+    failureRedirect: "/"
+  })
+);
+
+app.get("/home",function(req,res){
+  if (req.isAuthenticated()) {
+  Project.find({userId:req.user._id},function(err,projectList){
     if(!err){
       //console.log(projectList);
-      res.render("projects.ejs",{projects:projectList});
+      UserDetail.findOne({userId:req.user._id},function(err,user){
+        if(!err){
+          res.render("projects.ejs",{projects:projectList,user:user});
+        }
+      });
     }
   });
+}
+else{
+  res.redirect("/");
+}
+});
 
+app.get("/register", (req, res) => {
+  //console.log(req.user);
+  res.render("register.ejs");
+});
+
+app.get("/logout", (req, res) => {
+  req.logout();
+  res.redirect("/");
+});
+
+
+// app.post('/register', function(req, res) {
+//   // attach POST to user schema
+//   var user = new User({ username: req.body.username, password: req.body.password, name: req.body.name });
+//   // save in Mongo
+//   user.save(function(err) {
+//     if(err) {
+//       console.log(err);
+//     } else {
+//       //console.log('user: ' + user.email + " saved.");
+//       req.login(user, function(err) {
+//         if (err) {
+//           console.log(err);
+//         }
+//         res.redirect('/home');
+//       });
+//     }
+//   });
+// });
+
+app.post("/register", function(req, res) {
+  const newUsername = req.body.username;
+  const newPassword = req.body.password;
+  User.register({
+    username: newUsername
+  }, newPassword, function(err, user) {
+    if (err) {
+      console.log(err);
+    } else {
+      passport.authenticate('local', function(err, user, info) {
+        if (err) {
+          console.log(err);
+        }
+        if (!user) {
+          return res.redirect('/login');
+        }
+        req.logIn(user, function(err) {
+          if (err) {
+            console.log(err);
+          }
+          else {
+            var userDetails= new UserDetail({
+              name: req.body.name,
+              userId: user._id
+            });
+            userDetails.save(function(err){
+              if(err){
+                console.log(err);
+              }
+              else{
+                //console.log("Successfully saved");
+                res.redirect('/home');
+              }
+            });
+          }
+        });
+      })(req, res);
+    }
+  });
 });
 
 app.post("/addproject",function(req,res){
-  console.log(req.body.projectName);
-
+//  console.log(req.body.projectName);
   //code to handle adding project
 
   const projectName = req.body.projectName;
     Project.findOne({
-      name: projectName
+      name: projectName,
+      userId:req.user._id
     }, function(err, project) {
       if (!err) {
         //console.log(project);
         if (project == null) {
           const newProject = new Project({
-            name: projectName
+            name: projectName,
+            userId: req.user._id
           });
           newProject.save(function(err) {
             if (err) {
@@ -106,9 +228,9 @@ app.post("/addproject",function(req,res){
               console.log("New Project created successfully");
             }
           });
-          res.redirect("/");
+          res.redirect("/home");
         } else {
-          res.redirect("/");
+          res.redirect("/home");
         }
       }
     });
@@ -134,7 +256,7 @@ app.post("/addtask",function(req,res){
             console.log(err);
           }
           else{
-            res.redirect("/");
+            res.redirect("/home");
           }
         });
       }
