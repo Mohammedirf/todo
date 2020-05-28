@@ -19,7 +19,7 @@ app.use(express.static("public"));
 app.set('view-engine', 'ejs');
 
 app.use(session({
-  secret: process.env.DB_SECRET,
+  secret: "thisismylittlesecret",
   resave: false,
   saveUninitialized: false
 }));
