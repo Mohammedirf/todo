@@ -285,7 +285,7 @@ app.post("/completetask",function(req,res){
       console.log("Task completed successfully");
     }
   });
-  res.redirect("/");
+  res.redirect("/home");
   //  code to handle adding tasks under a project
 });
 
@@ -300,7 +300,7 @@ app.post("/delproject",function(req,res){
       console.log("Project Deleted Successfully");
     }
   });
-  res.redirect("/");
+  res.redirect("/home");
   //console.log(req.body.projectName);
 });
 
