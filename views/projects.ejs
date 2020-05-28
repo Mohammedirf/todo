@@ -74,7 +74,7 @@
             <% }); %>
             <form method="post" action="/addtask">
               <div class="input-group mb-3">
-                <input type="text" class="form-control" name="newTaskName" placeholder="Enter Your New Amazing Task" aria-label="Project name" aria-describedby="button-addon2">
+                <input type="text" class="form-control" name="newTaskName" placeholder="Enter Your New Amazing Task" aria-label="Project name" aria-describedby="button-addon2" required>
                 <input type="hidden" name="newTaskParentId" value="<%=project._id%>">
                 <div class="input-group-append">
                   <button class="btn btn-outline-secondary" type="submit" id="button-addon2"><i class="fas fa-plus"></i></button>
@@ -92,7 +92,7 @@
     </div>
     <form method="post" action="/addproject">
       <div class="input-group mb-3 newProject">
-        <input type="text" class="form-control" name="projectName" placeholder="Enter New Amazing Project" aria-label="Project name" aria-describedby="button-addon2">
+        <input type="text" class="form-control" name="projectName" placeholder="Enter New Amazing Project" aria-label="Project name" aria-describedby="button-addon2" required>
         <div class="input-group-append">
           <button class="btn btn-outline-secondary" type="submit" id="button-addon2"><i class="fas fa-plus"></i></button>
         </div>
